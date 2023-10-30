@@ -9,7 +9,7 @@ mod test {
         for i in 0..20_000 {
             key[i] = rand::thread_rng().gen_range(0..2);
         }
-        assert!(monobyte_test(key).unwrap());
+        assert!(monobit_test(key).unwrap());
     }
 
     #[test]

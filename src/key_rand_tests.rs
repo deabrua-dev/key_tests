@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub fn monobyte_test(bits: [u8; 20_000]) -> Result<bool, String> {
+pub fn monobit_test(bits: [u8; 20_000]) -> Result<bool, String> {
     if bits.is_empty() {
         return Err(String::from("Key is empty!"));
     }
