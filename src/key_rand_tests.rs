@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub fn monobyte_test(bits: [u8; 20_000]) -> Result<bool, String> {
     if bits.is_empty() {
         return Err(String::from("Key is empty!"));
@@ -46,7 +48,30 @@ pub fn pokker_test(bits: [u8; 20_000]) -> Result<bool, String> {
     if bits.is_empty() {
         return Err(String::from("Key is empty!"));
     }
-    let result = 1 <= 36;
+    let block_size = 4;
+    let bits_count = bits.len();
+    let blocks_num = bits_count / block_size;
+
+    let mut patterns: HashMap<Vec<u8>, u32> = HashMap::new();
+
+    for i in (0..bits_count).step_by(4) {
+        let mut pattern: Vec<u8> = vec![];
+        for j in i..(i + block_size) {
+            pattern.push(bits[j])
+        }
+        if patterns.contains_key(&pattern) {
+            *patterns.get_mut(&pattern).unwrap() += 1;
+        } else {
+            patterns.insert(pattern, 1);
+        }
+    }
+    let mut chi_pokker = 0.0;
+    for (_, count) in patterns.iter() {
+        chi_pokker += (*count as f64).powi(2);
+    }
+    chi_pokker = (2_f64.powi(block_size as i32) / blocks_num as f64) * chi_pokker - blocks_num as f64;
+
+    let result = (1.03 <= chi_pokker) && (chi_pokker <= 57.4);
     Ok(result)
 }
 
@@ -85,23 +110,12 @@ pub fn series_length_test(bits: [u8; 20_000]) -> Result<bool, String> {
             series_one_length[(cur_count - 1) as usize] += 1;
         }
     }
-    let one_series = (2267 <= series_zero_length[0] && series_zero_length[0] <= 2733) && 
-    (2267 <= series_one_length[0] && series_one_length[0] <= 2733);
-
-    let two_series = (1079 <= series_zero_length[1] && series_zero_length[1] <= 1421) && 
-    (1079 <= series_one_length[1] && series_one_length[1] <= 1421);
-
-    let three_series = (502 <= series_zero_length[2] && series_zero_length[2] <= 748) && 
-    (502 <= series_one_length[2] && series_one_length[2] <= 748);
-
-    let four_series = (223 <= series_zero_length[3] && series_zero_length[3] <= 402) && 
-    (223 <= series_one_length[3] && series_one_length[3] <= 402);
-
-    let five_series = (90 <= series_zero_length[4] && series_zero_length[4] <= 223) && 
-    (90 <= series_one_length[4] && series_one_length[4] <= 223);
-
-    let six_series = (90 <= series_zero_length[5] && series_zero_length[5] <= 223) && 
-    (90 <= series_one_length[5] && series_one_length[5] <= 223);
+    let one_series = (2265..2733).contains(&series_zero_length[0]) && (2265..2733).contains(&series_one_length[0]);
+    let two_series = (1079..1421).contains(&series_zero_length[1]) && (1079..1421).contains(&series_one_length[1]);
+    let three_series = (502..748).contains(&series_zero_length[2]) && (502..748).contains(&series_one_length[2]);
+    let four_series = (223..402).contains(&series_zero_length[3]) && (223..402).contains(&series_one_length[3]);
+    let five_series = (90..223).contains(&series_zero_length[4]) && (90..223).contains(&series_one_length[4]);
+    let six_series = (90..223).contains(&series_zero_length[5]) && (90..223).contains(&series_one_length[5]);
 
     let result = if one_series && two_series && three_series && four_series && five_series && six_series {
         true
