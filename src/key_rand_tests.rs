@@ -13,7 +13,7 @@ pub fn monobyte_test(bits: [u8; 20_000]) -> Result<bool, String> {
             one += 1;
         }
     }
-    let result = (9654 <= zero && zero <= 10346) && (9654 <= one && one <= 10346);
+    let result = (9654..10346).contains(&zero) && (9654..10346).contains(&one);
     Ok(result)
 }
 
@@ -71,7 +71,7 @@ pub fn pokker_test(bits: [u8; 20_000]) -> Result<bool, String> {
     }
     chi_pokker = (2_f64.powi(block_size as i32) / blocks_num as f64) * chi_pokker - blocks_num as f64;
 
-    let result = (1.03 <= chi_pokker) && (chi_pokker <= 57.4);
+    let result = (1.03..57.4).contains(&chi_pokker);
     Ok(result)
 }
 
