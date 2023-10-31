@@ -133,17 +133,15 @@ pub fn series_length_test(bytes: [u8; 2_500]) -> Result<bool, String> {
     Ok(result)
 }
 
-pub fn convert_bytes_to_bits(bytes: [u8; 2_500]) -> Result<[u8; 20_000], String> {
+fn convert_bytes_to_bits(bytes: [u8; 2_500]) -> Result<[u8; 20_000], String> {
     if bytes.is_empty() {
         return Err(String::from("Byte Array is empty!"));
     }
     let mut bits: Vec<u8> = vec![];
-    let mut temp = 0;
     for byte in bytes {
         let bits_str = format!("{:08b}", byte);
         for ch in bits_str.chars() {
-            temp = ch.to_digit(10).unwrap() as u8;
-            bits.push(temp);
+            bits.push(ch.to_digit(10).unwrap() as u8);
         }
     }
     let result: [u8; 20_000] = bits.try_into().unwrap();
