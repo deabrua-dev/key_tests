@@ -1,9 +1,11 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, result};
 
-pub fn monobit_test(bits: [u8; 20_000]) -> Result<bool, String> {
-    if bits.is_empty() {
+pub fn monobit_test(bytes: [u8; 2_500]) -> Result<bool, String> {
+    if bytes.is_empty() {
         return Err(String::from("Key is empty!"));
     }
+    let bits = convert_bytes_to_bits(bytes).unwrap();
+
     let mut zero = 0;
     let mut one = 0;
     for bit in bits {
@@ -17,10 +19,12 @@ pub fn monobit_test(bits: [u8; 20_000]) -> Result<bool, String> {
     Ok(result)
 }
 
-pub fn max_series_length(bits: [u8; 20_000]) -> Result<bool, String> {
-    if bits.is_empty() {
+pub fn max_series_length(bytes: [u8; 2_500]) -> Result<bool, String> {
+    if bytes.is_empty() {
         return Err(String::from("Key is empty!"));
     }
+    let bits = convert_bytes_to_bits(bytes).unwrap();
+
     let mut prev = 2;
     let mut cur_count = 0;
 
@@ -44,10 +48,12 @@ pub fn max_series_length(bits: [u8; 20_000]) -> Result<bool, String> {
     Ok(result)
 }
 
-pub fn pokker_test(bits: [u8; 20_000]) -> Result<bool, String> {
-    if bits.is_empty() {
+pub fn pokker_test(bytes: [u8; 2_500]) -> Result<bool, String> {
+    if bytes.is_empty() {
         return Err(String::from("Key is empty!"));
     }
+    let bits = convert_bytes_to_bits(bytes).unwrap();
+
     let block_size = 4;
     let bits_count = bits.len();
     let blocks_num = bits_count / block_size;
@@ -75,10 +81,12 @@ pub fn pokker_test(bits: [u8; 20_000]) -> Result<bool, String> {
     Ok(result)
 }
 
-pub fn series_length_test(bits: [u8; 20_000]) -> Result<bool, String> {
-    if bits.is_empty() {
+pub fn series_length_test(bytes: [u8; 2_500]) -> Result<bool, String> {
+    if bytes.is_empty() {
         return Err(String::from("Key is empty!"));
     }
+    let bits = convert_bytes_to_bits(bytes).unwrap();
+
     let mut series_zero_length: [u32; 6] = [0; 6];
     let mut series_one_length: [u32; 6] = [0; 6];
 
@@ -122,5 +130,22 @@ pub fn series_length_test(bits: [u8; 20_000]) -> Result<bool, String> {
     } else {
         false
     };
+    Ok(result)
+}
+
+pub fn convert_bytes_to_bits(bytes: [u8; 2_500]) -> Result<[u8; 20_000], String> {
+    if bytes.is_empty() {
+        return Err(String::from("Byte Array is empty!"));
+    }
+    let mut bits: Vec<u8> = vec![];
+    let mut temp = 0;
+    for byte in bytes {
+        let bits_str = format!("{:08b}", byte);
+        for ch in bits_str.chars() {
+            temp = ch.to_digit(10).unwrap() as u8;
+            bits.push(temp);
+        }
+    }
+    let result: [u8; 20_000] = bits.try_into().unwrap();
     Ok(result)
 }
